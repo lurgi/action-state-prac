@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { login } from "./action/login";
 
 export default function Home() {
@@ -11,7 +11,23 @@ export default function Home() {
     isError: false,
   });
 
+  const [hasToast, setHasToast] = useState(false);
   const { email, password, message, isError } = state;
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+
+    if (isPending) {
+      setHasToast(true);
+    }
+    if (!isPending) {
+      timer = setTimeout(() => setHasToast(false), 3000);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isPending, setHasToast]);
 
   return (
     <div className="grid place-items-center h-screen">
@@ -47,7 +63,8 @@ export default function Home() {
         </div>
 
         <div className="toast toast-bottom toast-center">
-          {message &&
+          {hasToast &&
+            message &&
             (isError ? (
               <div role="alert" className="alert alert-error">
                 <span>Error! {message}</span>
