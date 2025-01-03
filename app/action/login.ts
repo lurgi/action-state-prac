@@ -1,14 +1,10 @@
 "use server";
 
 interface LoginReturn {
-  data?: {
-    email: string;
-    password: string;
-    message: "success";
-  };
-  error?: {
-    message: "fail";
-  };
+  email: string;
+  password: string;
+  message?: string;
+  isError: boolean;
 }
 
 const wait = async (s = 1500) => new Promise((r) => setTimeout(r, s));
@@ -19,19 +15,19 @@ export async function login(currentState: LoginReturn, formData: FormData): Prom
 
   await wait();
 
-  if (email !== "lurgi@gamil.com" || password !== "qwer1234") {
+  if (email !== "lurgi@gmail.com" || password !== "qwer1234") {
     return {
-      error: {
-        message: "fail",
-      },
+      email,
+      password,
+      message: "fail",
+      isError: true,
     };
   }
 
   return {
-    data: {
-      email,
-      password,
-      message: "success",
-    },
+    email,
+    password,
+    message: "success",
+    isError: false,
   };
 }
